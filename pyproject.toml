@@ -35,3 +35,8 @@ pythonpath = ["src"]
 
 [tool.ruff]
 line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# Keep CI focused on correctness for the MVP. We can tighten style rules later.
+select = ["E4", "E7", "E9", "F"]
