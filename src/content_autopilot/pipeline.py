@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+from pathlib import Path
 
 from .collectors import collect_all
 from .config import Settings
@@ -21,6 +22,7 @@ class Pipeline:
     def __init__(self, settings: Settings):
         self.settings = settings
         self.store = QueueStore(settings.db_path)
+        self.project_root = Path(__file__).resolve().parents[2]
 
     def collect(self) -> tuple[int, int]:
         events = collect_all(self.settings)
@@ -29,8 +31,8 @@ class Pipeline:
 
     def draft(self) -> tuple[int, int]:
         llm = LLMClient(self.settings)
-        curator = Curator(llm)
-        writer = XWriter(llm)
+        curator = Curator(llm, self.project_root / "prompts" / "curator.md")
+        writer = XWriter(llm, self.project_root / "prompts" / "x_writer.md")
         reviewer = SafetyReviewer()
 
         created = 0
